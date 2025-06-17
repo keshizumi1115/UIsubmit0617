@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SEVEN Cafe</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', 'Hiragino Maru Gothic Pro', 'Rounded Mplus 1c', 'Meiryo', 'sans-serif';
+            background: #4a3e3b;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .coffee-machine {
+            background: #3a3230;
+            border-radius: 24px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.18);
+            padding: 48px 32px 32px 32px;
+            min-width: 420px;
+            color: #fff;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 32px;
+            letter-spacing: 0.1em;
+            font-size: 1.7em;
+            font-family: 'Segoe UI', 'Hiragino Maru Gothic Pro', 'Rounded Mplus 1c', 'Meiryo', 'sans-serif';
+        }
+        .menu-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 36px 32px;
+            margin-bottom: 32px;
+        }
+        .menu-block {
+            background: none;
+            border-radius: 12px;
+            padding: 0 0 12px 0;
+            text-align: center;
+        }
+        .menu-title {
+            font-size: 1.1em;
+            letter-spacing: 0.08em;
+            margin-bottom: 2px;
+            color: #bdb5b2;
+        }
+        .menu-sub {
+            font-size: 0.95em;
+            margin-bottom: 12px;
+            color: #fff;
+            font-family: 'Hiragino Maru Gothic Pro', 'Rounded Mplus 1c', 'Meiryo', 'sans-serif';
+        }
+        .cup-row {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            margin-bottom: 0;
+        }
+        .cup-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            border: none;
+            background: none;
+            outline: none;
+        }
+        .cup-outer {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 6px;
+            border: 5px solid #fff;
+            transition: border 0.2s;
+        }
+        .cup-outer.hot-latte { border-color: #e57373; }
+        .cup-outer.hot-coffee { border-color: #b71c1c; }
+        .cup-outer.ice-latte { border-color: #64b5f6; }
+        .cup-outer.ice-coffee { border-color: #1565c0; }
+        .cup-outer.selected { box-shadow: 0 0 0 4px #fff8, 0 2px 8px #0003; }
+        .cup-inner {
+            width: 32px;
+            height: 38px;
+            border-radius: 0 0 10px 10px/0 0 18px 18px;
+            background: #fff;
+            position: relative;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+        }
+        .cup-inner.coffee { background: #2d221c; }
+        .cup-inner.latte { background: #f5e3c3; }
+        .cup-inner.ice { box-shadow: 0 0 0 2px #b3e5fc inset; }
+        .cup-size {
+            font-size: 0.95em;
+            color: #fff;
+            margin-bottom: 2px;
+            font-family: 'Hiragino Maru Gothic Pro', 'Rounded Mplus 1c', 'Meiryo', 'sans-serif';
+        }
+        .cup-label {
+            font-size: 0.8em;
+            color: #bdb5b2;
+            letter-spacing: 0.05em;
+        }
+        .strength-section {
+            margin-bottom: 24px;
+            text-align: center;
+        }
+        .strength-label {
+            margin-bottom: 10px;
+            font-size: 1.05em;
+            color: #bdb5b2;
+            font-family: 'Hiragino Maru Gothic Pro', 'Rounded Mplus 1c', 'Meiryo', 'sans-serif';
+        }
+        .strength-options {
+            display: flex;
+            justify-content: center;
+            gap: 18px;
+        }
+        .strength-btn {
+            background: #eee;
+            color: #3a3230;
+            border: none;
+            border-radius: 8px;
+            padding: 8px 18px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: background 0.2s, color 0.2s;
+            font-family: 'Hiragino Maru Gothic Pro', 'Rounded Mplus 1c', 'Meiryo', 'sans-serif';
+        }
+        .strength-btn.selected {
+            background: #b38867;
+            color: #fff;
+        }
+        .start-btn {
+            width: 100%;
+            padding: 14px 0;
+            background: #b38867;
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.15em;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: background 0.2s;
+            font-family: 'Hiragino Maru Gothic Pro', 'Rounded Mplus 1c', 'Meiryo', 'sans-serif';
+        }
+        .start-btn:hover {
+            background: #8d6e63;
+        }
+        .result {
+            margin-top: 28px;
+            text-align: center;
+            font-size: 1.15em;
+            color: #fff;
+            font-family: 'Hiragino Maru Gothic Pro', 'Rounded Mplus 1c', 'Meiryo', 'sans-serif';
+        }
+    </style>
+</head>
+<body>
+    <div class="coffee-machine">
+        <h1>SEVEN Cafe</h1>
+        <form id="coffeeForm">
+            <div class="menu-grid">
+                <!-- HOT LATTE -->
+                <div class="menu-block">
+                    <div class="menu-title">HOT LATTE</div>
+                    <div class="menu-sub">ホットラテ</div>
+                    <div class="cup-row">
+                        <button type="button" class="cup-btn" data-type="ホットラテ" data-size="普通">
+                            <div class="cup-outer hot-latte" id="hot-latte-regular">
+                                <div class="cup-inner latte"></div>
+                            </div>
+                            <div class="cup-size">普通</div>
+                            <div class="cup-label">REGULAR</div>
+                        </button>
+                        <button type="button" class="cup-btn" data-type="ホットラテ" data-size="大きい">
+                            <div class="cup-outer hot-latte" id="hot-latte-large">
+                                <div class="cup-inner latte"></div>
+                            </div>
+                            <div class="cup-size">大きい</div>
+                            <div class="cup-label">LARGE</div>
+                        </button>
+                    </div>
+                </div>
+                <!-- HOT COFFEE -->
+                <div class="menu-block">
+                    <div class="menu-title">HOT COFFEE</div>
+                    <div class="menu-sub">ホットコーヒー</div>
+                    <div class="cup-row">
+                        <button type="button" class="cup-btn" data-type="ホットコーヒー" data-size="普通">
+                            <div class="cup-outer hot-coffee" id="hot-coffee-regular">
+                                <div class="cup-inner coffee"></div>
+                            </div>
+                            <div class="cup-size">普通</div>
+                            <div class="cup-label">REGULAR</div>
+                        </button>
+                        <button type="button" class="cup-btn" data-type="ホットコーヒー" data-size="大きい">
+                            <div class="cup-outer hot-coffee" id="hot-coffee-large">
+                                <div class="cup-inner coffee"></div>
+                            </div>
+                            <div class="cup-size">大きい</div>
+                            <div class="cup-label">LARGE</div>
+                        </button>
+                    </div>
+                </div>
+                <!-- ICE LATTE -->
+                <div class="menu-block">
+                    <div class="menu-title">ICE LATTE</div>
+                    <div class="menu-sub">アイスラテ</div>
+                    <div class="cup-row">
+                        <button type="button" class="cup-btn" data-type="アイスラテ" data-size="普通">
+                            <div class="cup-outer ice-latte" id="ice-latte-regular">
+                                <div class="cup-inner latte ice"></div>
+                            </div>
+                            <div class="cup-size">普通</div>
+                            <div class="cup-label">REGULAR</div>
+                        </button>
+                        <button type="button" class="cup-btn" data-type="アイスラテ" data-size="大きい">
+                            <div class="cup-outer ice-latte" id="ice-latte-large">
+                                <div class="cup-inner latte ice"></div>
+                            </div>
+                            <div class="cup-size">大きい</div>
+                            <div class="cup-label">LARGE</div>
+                        </button>
+                    </div>
+                </div>
+                <!-- ICE COFFEE -->
+                <div class="menu-block">
+                    <div class="menu-title">ICE COFFEE</div>
+                    <div class="menu-sub">アイスコーヒー</div>
+                    <div class="cup-row">
+                        <button type="button" class="cup-btn" data-type="アイスコーヒー" data-size="普通">
+                            <div class="cup-outer ice-coffee" id="ice-coffee-regular">
+                                <div class="cup-inner coffee ice"></div>
+                            </div>
+                            <div class="cup-size">普通</div>
+                            <div class="cup-label">REGULAR</div>
+                        </button>
+                        <button type="button" class="cup-btn" data-type="アイスコーヒー" data-size="大きい">
+                            <div class="cup-outer ice-coffee" id="ice-coffee-large">
+                                <div class="cup-inner coffee ice"></div>
+                            </div>
+                            <div class="cup-size">大きい</div>
+                            <div class="cup-label">LARGE</div>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="strength-section">
+                <div class="strength-label">味の濃さを選択</div>
+                <div class="strength-options">
+                    <button type="button" class="strength-btn" data-strength="うすめ">うすめ</button>
+                    <button type="button" class="strength-btn" data-strength="ふつう">ふつう</button>
+                    <button type="button" class="strength-btn" data-strength="こいめ">こいめ</button>
+                </div>
+            </div>
+            <input type="hidden" name="type" id="selectedType">
+            <input type="hidden" name="size" id="selectedSize">
+            <input type="hidden" name="strength" id="selectedStrength">
+            <button type="submit" class="start-btn">抽出スタート</button>
+        </form>
+        <div class="result" id="result"></div>
+    </div>
+    <script>
+        // カップ選択
+        const cupBtns = document.querySelectorAll('.cup-btn');
+        let selectedCup = null;
+        cupBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                if(selectedCup) selectedCup.querySelector('.cup-outer').classList.remove('selected');
+                btn.querySelector('.cup-outer').classList.add('selected');
+                selectedCup = btn;
+                document.getElementById('selectedType').value = btn.getAttribute('data-type');
+                document.getElementById('selectedSize').value = btn.getAttribute('data-size');
+            });
+        });
+        // 味の濃さ選択
+        const strengthBtns = document.querySelectorAll('.strength-btn');
+        let selectedStrength = null;
+        strengthBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                if(selectedStrength) selectedStrength.classList.remove('selected');
+                btn.classList.add('selected');
+                selectedStrength = btn;
+                document.getElementById('selectedStrength').value = btn.getAttribute('data-strength');
+            });
+        });
+        // フォーム送信
+        document.getElementById('coffeeForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const type = document.getElementById('selectedType').value;
+            const size = document.getElementById('selectedSize').value;
+            const strength = document.getElementById('selectedStrength').value;
+            if(!type || !size || !strength) {
+                document.getElementById('result').textContent = 'すべて選択してください。';
+                return;
+            }
+            document.getElementById('result').textContent = `「${type}」「${size}」「${strength}」で抽出を開始します。`;
+        });
+    </script>
+</body>
+</html>
